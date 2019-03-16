@@ -7,16 +7,27 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
+    "blockstack": "^19.0.0",
+    "chart.js": "^2.8.0",
+    "ipfs": "^0.34.4",
+    "orbit-db": "^0.19.9",
     "register-service-worker": "^1.6.2",
     "vue": "^2.6.6",
+    "vue-chartjs": "^3.4.0",
     "vue-router": "^3.0.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.5.0",
     "@vue/cli-plugin-pwa": "^3.5.0",
     "@vue/cli-service": "^3.5.0",
+    "coffee-loader": "^0.9.0",
+    "coffeescript": "^2.3.2",
+    "pug": "^2.0.3",
+    "pug-plain-loader": "^1.0.0",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
+    "vue-cli-plugin-coffeescript": "0.0.3",
+    "vue-cli-plugin-tailwind": "^0.4.1",
     "vue-template-compiler": "^2.5.21"
   }
 }

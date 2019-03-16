@@ -1,29 +1,17 @@
-# agaze
+# agaze 🎱
 
-## Project setup
-```
-npm install
-```
+simple, non-invasive website analytics for dapps
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+## what is this?
 
-### Compiles and minifies for production
-```
-npm run build
-```
+this is a lightweight, analytics tool for your decentralized applications or centralized applications. there is no client-side dependency on any specific dapp framework; just drop it in
 
-### Run your tests
-```
-npm run test
-```
+## how to use on your website
 
-### Lints and fixes files
-```
-npm run lint
-```
+in your project folder :
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+~~~bash
+npm install @brycedev/agaze
+## or
+yarn add @brycedev/agaze
+~~~
