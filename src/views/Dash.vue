@@ -15,10 +15,10 @@
           p.text-white.uppercase.tracking-wide.text-sm.opacity-75.cursor-pointer(class="hover:opacity-100") https://forms.id
       .w-full.flex.flex-col.mb-12
         .flex.items-center.mx-4.pb-6
-          p.text-white.uppercase.tracking-wide.text-sm.cursor-pointer.mr-4(class="hover:opacity-100") Today
-          p.text-white.uppercase.tracking-wide.text-sm.opacity-75.cursor-pointer.mr-4(class="hover:opacity-100") Week
-          p.text-white.uppercase.tracking-wide.text-sm.opacity-75.cursor-pointer.mr-4(class="hover:opacity-100") Month
-          p.text-white.uppercase.tracking-wide.text-sm.opacity-75.cursor-pointer.mr-4(class="hover:opacity-100") Year
+          p.text-white.uppercase.tracking-wide.text-sm.opacity-75.cursor-pointer.mr-4(class="hover:opacity-100" :class="{'opacity-100' : timePeriod == 'today' }" @click="timePeriod = 'today'") Today
+          p.text-white.uppercase.tracking-wide.text-sm.opacity-75.cursor-pointer.mr-4(class="hover:opacity-100" :class="{'opacity-100' : timePeriod == 'week' }" @click="timePeriod = 'week'") Week
+          p.text-white.uppercase.tracking-wide.text-sm.opacity-75.cursor-pointer.mr-4(class="hover:opacity-100" :class="{'opacity-100' : timePeriod == 'month' }" @click="timePeriod = 'month'") Month
+          p.text-white.uppercase.tracking-wide.text-sm.opacity-75.cursor-pointer.mr-4(class="hover:opacity-100" :class="{'opacity-100' : timePeriod == 'year' }" @click="timePeriod = 'year'") Year
         .flex
           div(class="w-full md:w-1/3")
             .mx-4.rounded-lg.bg-agaze.flex.flex-col.p-6
@@ -72,7 +72,8 @@ export default
     customPageViews: null,
     pageViews: 119,
     sideMenuOpen: false,
-    listView: false
+    listView: false,
+    timePeriod: 'today'
 </script>
 
 <style lang="stylus" scoped>
