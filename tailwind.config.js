@@ -3,6 +3,8 @@ let defaultConfig = require('tailwindcss/defaultConfig')()
 let colors = {
   'transparent': 'transparent',
   'black': '#000',
+  'glass': 'rgba(255,255,255,.23)',
+  'fog': 'rgba(255,255,255,.33)',
   'agaze': '#1e88ac',
   'slate': '#1B2125',
   'glack': '#22292f',
@@ -905,6 +907,6 @@ module.exports = {
   options: {
     prefix: "",
     important: false,
-    separator: "-"
+    separator: ":"
   }
 };
