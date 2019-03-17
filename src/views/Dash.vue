@@ -49,6 +49,9 @@
         .ml-2(class="w-1/2")
           p.w-full.bg-slate.py-2.text-white.uppercase.px-4.rounded Referrers
           .flex.justify-between.items-center.p-4.border-b.border-glass.text-white.tracking-wide.cursor-pointer.rounded.subtle(class="hover:bg-fog")
+            p ---
+            p 190
+          .flex.justify-between.items-center.p-4.border-b.border-glass.text-white.tracking-wide.cursor-pointer.rounded.subtle(class="hover:bg-fog")
             p producthunt.com
             p 15
           .flex.justify-between.items-center.p-4.border-b.border-glass.text-white.tracking-wide.cursor-pointer.rounded.subtle(class="hover:bg-fog")
@@ -64,8 +67,6 @@
 
 <script lang="coffee">
 import MainChart from '../components/MainChart'
-import { Model, Zapp } from '../../../zapp/pkg/dist-web/index.js'
-
 export default
   components: { MainChart }
   data: ->

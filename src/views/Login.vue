@@ -12,7 +12,7 @@ export default
   store: ['user']
   data: ->
     origin = window.location.origin
-    confg = new AppConfig(['store_write', 'publish_data'], origin, "/login")
+    confg = new AppConfig(['store_write'], origin, "/login")
     session: new UserSession({ appConfig: confg })
   methods:
     loginWithBlockstack: -> @session.redirectToSignIn()
