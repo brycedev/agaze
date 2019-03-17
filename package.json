@@ -4,17 +4,7 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build && coffee --no-header -o src/lib -c src/lib && webpack --env prod src/lib/agaze.js -o public/js/agaze.js"
-  },
-  "@pika/pack": {
-    "pipeline": [
-      [
-        "@pika/plugin-standard-pkg"
-      ],
-      [
-        "@pika/plugin-build-web"
-      ]
-    ]
+    "build": "coffee --no-header -o src/lib -c src/lib && webpack --config src/lib/webpack.config.js"
   },
   "dependencies": {
     "blockstack": "^19.0.0",
