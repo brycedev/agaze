@@ -53,7 +53,7 @@ do ->
     ref = document.referrer if document.referrer.indexOf(hostname) < 0
     console.log 'referrer:', ref
     data = id: uuid(), path: path, sid: sid, ref: ref
-    encrData = encryptECIES c.pk, JSON.stringify data
+    encrData = encryptECIES config.pk, JSON.stringify data
     console.log 'sending data: ', data
     console.log 'sending encrypted data: ', encrData
     # await l.append(encrData)
