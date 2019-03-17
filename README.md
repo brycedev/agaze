@@ -1,17 +1,19 @@
-# agaze 🎱
+# agāze 🔮
 
-simple, non-invasive website analytics for dapps
+simple, non-invasive website analytics for dapps, or any app really. built for the modern web; powered by the modern web
 
 ## what is this?
 
-this is a lightweight, analytics tool for your decentralized applications or centralized applications. there is no client-side dependency on any specific dapp framework; just drop it in
+this is a lightweight, analytics tool for your decentralized applications or centralized applications. no servers. no frivoulous privaciy invasion. no sales of the data. just simple analaytics
 
-## how to use on your website
+## caveats?
 
-in your project folder :
+yes. there are some. this code doesn't utilize cookies, so we aren't going to differentiate betweeen unique visits and visits. they're just visits by _someone_. i personally believe this is enough actionable data, or at least, a very good start
 
-~~~bash
-npm install @brycedev/agaze
-## or
-yarn add @brycedev/agaze
-~~~
+## how?
+
+agāze uses IPFS for encrypted data transfer. IPFS is 100% distributed and peer to peer. agāze utilizes Blockstack Gaia for data storage, so the website owner is the custodian of the data, not agāze. because of this, we couldn't sell your data even if we wanted to
+
+## why?
+
+this could get rather lengthy...
