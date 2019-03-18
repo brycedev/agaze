@@ -13,31 +13,36 @@
           div(class="w-1/3 flex items-center justify-center")
             h1.font-light.text-white.text-normal.tracking-wide.leading-none.pb-4 agāze
           div(class="w-1/3 bg-transparent flex items-center justify-end")
-            p.text-white.uppercase.tracking-wide.text-sm.opacity-75.cursor-pointer(class="hover:opacity-100") https://forms.id
+            p.text-white.uppercase.tracking-wide.text-sm.opacity-75(v-if="$route.name !== 'NewSite'") https://forms.id
         .flex-grow
           router-view
-    .fixed.pin-l.pin-b.pin-t.w-300.z-0.opacity-0.subtle(:class="{'opacity-100' : sideMenuOpen, 'pointer-events-none' : !sideMenuOpen}")
+    .fixed.pin-l.pin-b.pin-t.w-300.z-0.opacity-0.subtle.flex.flex-col(:class="{'opacity-100' : sideMenuOpen, 'pointer-events-none' : !sideMenuOpen}")
       .p-8.flex.items-center
         img.w-10.h-10.rounded-full.mr-4(:src="user.avatar")
         p.text-white.tracking-wide.text-xl(v-if="user") {{ user.username }}
-      p.w-full.bg-slate.py-2.text-white.uppercase.px-8.mt-8 Sites
-      .flex.justify-between.items-center.p-4.px-8.border-b.border-glass.text-white.tracking-wide.cursor-pointer.subtle(class="hover:bg-fog")
-        p.text-xl Forms.id
-        .w-4.h-4.bg-agaze.rounded-full.opacity-75
-      .flex.justify-between.items-center.p-4.px-8.border-b.border-glass.text-white.tracking-wide.cursor-pointer.subtle(class="hover:bg-fog")
-        p.text-xl Scrola.app
-      .flex.justify-between.items-center.p-4.px-8.border-b.border-glass.text-white.tracking-wide.cursor-pointer.subtle(class="hover:bg-fog")
-        p.text-xl Mantalabs.co
-      router-link.no-underline.flex.justify-between.items-center.p-4.px-8.border-b.border-glass.text-white.tracking-wide.cursor-pointer.subtle(:to="{ name: 'NewSite'}" class="hover:bg-fog")
-        p.text-xl.opacity-50 Add new site...
-
+      .w-full.flex-grow
+        p.w-full.bg-slate.py-2.text-white.uppercase.px-8.mt-8 Sites
+        .flex.justify-between.items-center.p-4.px-8.border-b.border-glass.text-white.tracking-wide.cursor-pointer.subtle(class="hover:bg-fog")
+          p.text-xl Forms.id
+          .w-4.h-4.bg-agaze.rounded-full.opacity-75
+        .flex.justify-between.items-center.p-4.px-8.border-b.border-glass.text-white.tracking-wide.cursor-pointer.subtle(class="hover:bg-fog")
+          p.text-xl Scrola.app
+        .flex.justify-between.items-center.p-4.px-8.border-b.border-glass.text-white.tracking-wide.cursor-pointer.subtle(class="hover:bg-fog")
+          p.text-xl Mantalabs.co
+        .flex.justify-between.items-center.p-4.px-8.border-b.border-glass.text-white.tracking-wide.cursor-pointer.subtle(class="hover:bg-fog" v-for="site in collections.sites")
+          p.text-xl {{ site.label }}
+        router-link.no-underline.flex.justify-between.items-center.p-4.px-8.border-b.border-glass.text-white.tracking-wide.cursor-pointer.subtle(:to="{ name: 'NewSite'}" class="hover:bg-fog")
+          p.text-xl.opacity-50 Add new site...
+      .p-8.flex.items-center.justify-between
+        ion-icon.text-white.cursor-pointer.opacity-75.subtle(class="hover:opacity-100" name="ios-cog" size="large")
+        ion-icon.text-white.cursor-pointer.opacity-75.subtle(class="hover:opacity-100" name="log-out" size="large")
 </template>
 
 <script lang="coffee">
 import MainChart from '../components/MainChart'
 
 export default
-  store: ['session', 'user']
+  store: ['session','collections','indices','user']
   components: { MainChart }
   data: ->
     sideMenuOpen: false

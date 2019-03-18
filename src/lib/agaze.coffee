@@ -4,29 +4,30 @@ import Ipfs from 'ipfs'
 import Log from 'ipfs-log'
 
 do ->
-  config = { mh: '', pk: '' }
-  i = null
-  l = null
+  config = { li: '', pk: '' }
+  ipfs = null
+  log = null
   sid = sessionStorage.getItem('agaze:sid')
 
   boot = ->
     new Promise((resolve, reject) ->
-      i = new Ipfs(
+      ipfs = new Ipfs(
         repo: 'agaze://.dev'
         start: false
         EXPERIMENTAL:  pubsub: true
       )
-      i.on 'error', (e) -> reject(e)
-      i.on 'ready', () -> resolve()
-      i
+      ipfs.on 'error', (e) -> reject(e)
+      ipfs.on 'ready', () -> resolve()
+      ipfs
     )
 
-  configure = (multihash, pubkey) ->
-    config.mh = multihash
+  configure = (logid, pubkey) ->
+    config.li = logid
     config.pk = pubkey
     sessionStorage.setItem('agaze:sid', uuid()) unless sid?
     sid = sessionStorage.getItem('agaze:sid')
     await boot()
+    log = new Log(ipfs, null, { logId: config.li })
 
   uuid = ->
     d = new Date().getTime()
@@ -37,6 +38,7 @@ do ->
     l.replace(/-/g, "")
 
   sendPageview = (data) ->
+    return unless log?
     console.log 'sending pageview'
     req = window.location
     console.log 'req:', req
@@ -56,7 +58,7 @@ do ->
     encrData = encryptECIES config.pk, JSON.stringify data
     console.log 'sending data: ', data
     console.log 'sending encrypted data: ', encrData
-    # await l.append(encrData)
+    await log.append(encrData)
 
   window.agaze = ->
     funcs = 'configure': configure, 'sendPageview': sendPageview
