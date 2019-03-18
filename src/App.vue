@@ -12,6 +12,7 @@ export default
       userData = @session.loadUserData()
       console.log userData
       @user = {}
+      @user.apk = userData.appPrivateKey
       @user.did = userData.decentralizedID
       @user.username = userData.profile?.name
       @user.username ||= userData.username

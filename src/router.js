@@ -26,14 +26,14 @@ export default new Router({
       component: () => import("./views/Dash.vue"),
       children: [
         {
-          name: "Main",
-          path: "/",
-          component: () => import("./views/dash/Main.vue")
-        },
-        {
           name: "NewSite",
           path: "new",
           component: () => import("./views/dash/NewSite.vue")
+        },
+        {
+          name: "Main",
+          path: ":id",
+          component: () => import("./views/dash/Main.vue")
         }
       ]
     }
