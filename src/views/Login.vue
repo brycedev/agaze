@@ -6,14 +6,8 @@
 </template>
 
 <script lang="coffee">
-import { AppConfig, UserSession } from 'blockstack'
-
 export default
-  store: ['user']
-  data: ->
-    origin = window.location.origin
-    confg = new AppConfig(['store_write'], origin, "/login")
-    session: new UserSession({ appConfig: confg })
+  store: ['session', 'user']
   methods:
     loginWithBlockstack: -> @session.redirectToSignIn()
     setUser: ->
@@ -23,15 +17,12 @@ export default
       @user.username = userData.profile?.name
       @user.username ||= userData.username
       @user.username ||= userData.identityAddress
-      @$router.push({ name: 'Dash' })
+      @$router.push({ name: 'Main' })
   mounted: ->
+    @$router.push({ name: 'Main' }) if @session.isUserSignedIn()
     @setUser() if !@session.isSignInPending()
     if @session.isSignInPending()
       await @session.handlePendingSignIn()
       @$router.push({ name: @$route.name })
       @setUser()
 </script>
-
-<style scoped>
-
-</style>

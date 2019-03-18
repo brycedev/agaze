@@ -10,6 +10,7 @@ Vue.use(stash)
 new Vue({
   data: () => ({
     store: {
+      session: null,
       user: null
     }
   }),

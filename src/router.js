@@ -12,7 +12,7 @@ export default new Router({
     {
       path: "/",
       name: "home",
-      redirect: '/login'
+      redirect: "/login"
       // component: Home
     },
     {
@@ -21,14 +21,19 @@ export default new Router({
       component: Login
     },
     {
-      path: "/d",
+      path: "/a",
       name: "Dash",
       component: () => import("./views/Dash.vue"),
       children: [
         {
-          name: 'Main',
-          path: '/',
-          component: () => import('./views/dash/Main.vue')
+          name: "Main",
+          path: "/",
+          component: () => import("./views/dash/Main.vue")
+        },
+        {
+          name: "NewSite",
+          path: "new",
+          component: () => import("./views/dash/NewSite.vue")
         }
       ]
     }

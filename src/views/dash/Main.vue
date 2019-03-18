@@ -56,6 +56,7 @@
 import MainChart from '../../components/MainChart'
 
 export default
+  store: ['user']
   components: { MainChart }
   data: ->
     customPageViews: null,
