@@ -10,7 +10,6 @@ export default
   methods:
     setUser: ->
       userData = @session.loadUserData()
-      console.log userData
       @user = {}
       @user.apk = userData.appPrivateKey
       @user.did = userData.decentralizedID
@@ -30,12 +29,21 @@ export default
 @tailwind preflight
 @tailwind components
 @tailwind utilities
-@font-face {
-  font-family: greycliff;
-  src: url(/fonts/greycliff-cf-regular.woff2);
-}
+@font-face
+  font-family greycliff
+  src url(/fonts/greycliff-cf-regular.woff2)
 body
   font-family greycliff
 .subtle
   transition all .17s ease
+@keyframes spin
+    from
+      transform:rotate(0deg)
+    to
+      transform:rotate(360deg)
+.spin
+  animation-name spin
+  animation-duration 3000ms
+  animation-iteration-count infinite
+  animation-timing-function linear
 </style>

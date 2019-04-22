@@ -14,7 +14,7 @@ window.uuid = ((a, b) => {
 new Vue({
   data: () => ({
     store: {
-      collections: {
+      models: {
         sites: []
       },
       indices: {
