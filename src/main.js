@@ -23,7 +23,7 @@ new Vue({
         sites: []
       },
       session: null,
-      user: null
+      user: {}
     }
   }),
   router,

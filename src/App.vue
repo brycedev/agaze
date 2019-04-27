@@ -4,25 +4,30 @@
 
 <script lang="coffee">
 import { AppConfig, UserSession } from 'blockstack'
+import OrbitDB from 'orbit-db'
 
 export default
   store: ['session', 'user']
   methods:
-    setUser: ->
-      userData = @session.loadUserData()
-      @user = {}
-      @user.apk = userData.appPrivateKey
-      @user.did = userData.decentralizedID
-      @user.username = userData.profile?.name
-      @user.username ||= userData.username
-      @user.username ||= userData.identityAddress
-      @user.avatar = userData.profile?.image?[0].contentUrl
-      @user.avatar ||= 'https://picsum.photos/100'
+    connectIpfs: () ->
+      new Promise (resolve, reject) ->
+        repoPath = 'agaze://.dev'
+        try
+          ipfs = new Ipfs
+            repo: repoPath
+            EXPERIMENTAL: { pubsub: true, sharding: false, dht: false }
+        catch err
+          console.log(err)
+          reject(err)
+        ipfs.on('error', (e) => console.error(e))
+        ipfs.on 'ready', () ->
+          window.orbit = new OrbitDB(ipfs)
+          resolve()
   mounted: ->
+    await @connectIpfs()
     origin = window.location.origin
     confg = new AppConfig(['store_write'], origin, "/login")
     @session = new UserSession({ appConfig: confg })
-    @setUser() if @session.isUserSignedIn()
 </script>
 
 <style lang="stylus">

@@ -10,7 +10,6 @@
 </template>
 
 <script lang="coffee">
-import Log from 'ipfs-log'
 
 export default
   store: ['session','models','indices','user']
@@ -40,17 +39,20 @@ export default
       pattern.test url
     submit: ->
       return if !@canSubmit
+      url = new URL(@url)
       @isSubmitting = true
-      log = new Log(new Ipfs())
       newSite = label: @label, url: @url
       newSite.id = uuid('site')
-      newSite.li = log.id
       newSite.createdAt = Date.now()
       newSite.updatedAt = Date.now()
-      @models.sites.push newSite
+      db = await orbit.create("agaze.#{@user.pk.slice(0,8)}.#{url.host}", 'docstore', { write: ['*']})
+      newSite.db = db.address.toString()
       @indices.sites.push newSite.id
+      analytics = { events: [], pageviews: [] }
       await @session.putFile "sites.json", JSON.stringify @indices.sites, { encrypt : true }
       await @session.putFile "sites/#{newSite.id}.json", JSON.stringify newSite, { encrypt : true }
-      await @session.putFile "sites/analytics/#{newSite.id}.json", JSON.stringify { pageviews: [] }, { encrypt : true }
+      await @session.putFile "sites/analytics/#{newSite.id}.json", JSON.stringify analytics, { encrypt : true }
+      newSite.analytics = analytics
+      @models.sites.push newSite
       @$router.push({ name: 'Main', params: { id: newSite.id } })
 </script>

@@ -64,7 +64,7 @@ export default
       if @activeSite?
         switch @timePeriod
           when 'today'
-            (a for a in @activeSite?.analytics.pageviews when dayjs().isSame(a.ts, 'day'))
+            (a for a in @activeSite?.analytics?.pageviews when dayjs().isSame(a.ts, 'day'))
           when 'week'
             (a for a in @activeSite?.analytics?.pageviews when dayjs().isSame(a.ts, 'day'))
           when 'month'

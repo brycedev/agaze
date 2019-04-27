@@ -1,31 +1,39 @@
-require('crypto')
-eccrypto = require("eccrypto")
-import Log from 'ipfs-log'
+OrbitDB = require('orbit-db')
+import { encryptECIES } from 'blockstack/lib/encryption'
 
 do ->
-  config = { li: '', pk: '' }
+  config = { db: '', pk: '' }
   ipfs = null
   log = null
+  orbit = null
   sid = sessionStorage.getItem('agaze:sid')
 
   boot = () ->
     new Promise (resolve, reject) ->
-      ipfs = new Ipfs(
+      ipfs = new Ipfs
         repo: 'agaze://.dev'
         start: false
         EXPERIMENTAL:  pubsub: true
-      )
       ipfs.on 'error', (e) -> reject(e)
-      ipfs.on 'ready', () -> resolve()
+      ipfs.on 'ready', () ->
+        orbit = new OrbitDB(ipfs)
+        resolve()
 
-  configure = (logid, pubkey) ->
-    console.log 'configuring'
-    config.li = logid
+  configure = (addr, pubkey) ->
+    config.db = addr
     config.pk = pubkey
     sessionStorage.setItem('agaze:sid', uuid()) unless sid?
     sid = sessionStorage.getItem('agaze:sid')
-    await boot()
-    log = new Log(ipfs, null, { logId: config.li })
+    try
+      await boot()
+    catch err
+      console.log 'error booting ipfs :', err
+    try
+      resolvedDb = "/orbitdb/#{config.db}/agaze.#{config.pk.slice(0,8)}.#{window.location.host}"
+      console.log resolvedDb
+      log = await orbit.open(resolvedDb)
+    catch err
+      console.log 'error opening orbit db :', err
     return
 
   uuid = () ->
@@ -40,9 +48,9 @@ do ->
     console.log 'attempting to send pageview'
     return unless log?
     req = window.location
-    console.log 'req:', req
-    console.log 'should we track? : ', navigator.doNotTrack isnt '1'
-    console.log 'retreating' if navigator.doNotTrack is '1'
+    # console.log 'req:', req
+    # console.log 'should we track? : ', navigator.doNotTrack isnt '1'
+    # console.log 'retreating' if navigator.doNotTrack is '1'
     # return if navigator.doNotTrack is '1' <-- turn this on in prod
     return if document.visibilityState? is 'prerender'
     return if req.host is ''
@@ -50,19 +58,20 @@ do ->
     path = req.pathname + req.search
     path = '/' unless path?
     hostname = "#{req.protocol}//#{req.hostname}"
-    ref = ''
+    ref = false
     ref = document.referrer if document.referrer.indexOf(hostname) < 0
-    console.log 'referrer:', ref
+    # console.log 'referrer:', ref
     data = id: uuid(), path: path, sid: sid, ref: ref
-    encrData = await eccrypto.encrypt config.pk, JSON.stringify data
     console.log 'sending data: ', data
-    console.log 'sending encrypted data: ', encrData
-    await log.append(encrData || {})
+    try
+      encrData = await encryptECIES config.pk, JSON.stringify data
+      await log.put(encrData || {})
+    catch err
+      console.log err
     return
 
   window.agaze = (args...) ->
     funcs = 'configure': configure, 'sendPageview': sendPageview
-    args = args[1..-1]
     c = args.shift()
     funcs[c].apply(this, args)
     return

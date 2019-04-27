@@ -17,9 +17,9 @@
         .flex-grow
           router-view
     .fixed.pin-l.pin-b.pin-t.w-300.z-0.opacity-0.subtle.flex.flex-col(:class="{'opacity-100' : sideMenuOpen, 'pointer-events-none' : !sideMenuOpen}")
-      .p-8.flex.items-center
+      .p-8.flex.items-center(v-if="user")
         img.w-10.h-10.rounded-full.mr-4(:src="user.avatar")
-        p.text-white.tracking-wide.text-xl(v-if="user") {{ user.username }}
+        p.text-white.tracking-wide.text-xl {{ user.username }}
       .w-full.flex-grow
         p.w-full.bg-slate.py-2.text-white.uppercase.px-8.mt-8 Sites
         router-link.no-underline.flex.justify-between.items-center.p-4.px-8.border-b.border-glass.text-white.tracking-wide.cursor-pointer.subtle(class="hover:bg-fog" v-for="site in models.sites" :to="{ name: 'Main', params: { id: site.id }}")
