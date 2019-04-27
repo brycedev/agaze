@@ -15,7 +15,7 @@
           .mx-4.rounded-lg.bg-agaze.flex.flex-col.p-6
             p.text-white.uppercase.tracking-wide.mb-4.text-sm Page Views
             h1.text-white.m-0.tracking-wide.text-6xl.font-normal(v-if="customPageViews") {{ customPageViews }}
-            h1.text-white.m-0.tracking-wide.text-6xl.font-normal(v-else) {{ pageViews }}
+            h1.text-white.m-0.tracking-wide.text-6xl.font-normal(v-else) {{ activeSite ? activeSite.analytics.pageviews.length : 0 }}
         div(class="w-full md:w-1/3")
           .mx-4.rounded-lg.bg-agaze.flex.flex-col.p-6
             p.text-white.uppercase.tracking-wide.mb-4.text-sm Avg. Time On Site
@@ -56,11 +56,25 @@
 import MainChart from '../../components/MainChart'
 
 export default
-  store: ['user']
+  store: ['session','models','indices','user']
   components: { MainChart }
+  computed:
+    activeSite: -> (site for site in @models.sites when site.id is @$route.params.id)[0] || false
+    stats: ->
+      if @activeSite?
+        switch @timePeriod
+          when 'today'
+            (a for a in @activeSite?.analytics.pageviews when dayjs().isSame(a.ts, 'day'))
+          when 'week'
+            (a for a in @activeSite?.analytics?.pageviews when dayjs().isSame(a.ts, 'day'))
+          when 'month'
+            (a for a in @activeSite?.analytics?.pageviews when dayjs().isSame(a.ts, 'day'))
+          when 'today'
+            (a for a in @activeSite?.analytics?.pageviews when dayjs().isSame(a.ts, 'day'))
+      else
+        return false
   data: ->
     customPageViews: null,
-    pageViews: 0,
     listView: false,
     timePeriod: 'today'
 </script>

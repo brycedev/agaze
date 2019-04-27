@@ -1,16 +1,16 @@
-
-import { encryptECIES } from 'blockstack/lib/encryption'
-import Ipfs from 'ipfs'
+require('crypto')
+eccrypto = require("eccrypto")
 import Log from 'ipfs-log'
 
 do ->
   config = { li: '', pk: '' }
+  funcs = 'configure': configure, 'sendPageview': sendPageview
   ipfs = null
   log = null
   sid = sessionStorage.getItem('agaze:sid')
 
-  boot = ->
-    new Promise((resolve, reject) ->
+  boot = () ->
+    new Promise (resolve, reject) ->
       ipfs = new Ipfs(
         repo: 'agaze://.dev'
         start: false
@@ -18,18 +18,18 @@ do ->
       )
       ipfs.on 'error', (e) -> reject(e)
       ipfs.on 'ready', () -> resolve()
-      ipfs
-    )
 
   configure = (logid, pubkey) ->
+    console.log 'configuring'
     config.li = logid
     config.pk = pubkey
     sessionStorage.setItem('agaze:sid', uuid()) unless sid?
     sid = sessionStorage.getItem('agaze:sid')
-    await boot()
+    # await boot()
     log = new Log(ipfs, null, { logId: config.li })
+    return
 
-  uuid = ->
+  uuid = () ->
     d = new Date().getTime()
     l = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace /[xy]/g, (c) ->
       r = (d + Math.random() * 16) % 16 | 0
@@ -38,8 +38,8 @@ do ->
     l.replace(/-/g, "")
 
   sendPageview = (data) ->
+    console.log 'attempting to send pageview'
     return unless log?
-    console.log 'sending pageview'
     req = window.location
     console.log 'req:', req
     console.log 'should we track? : ', navigator.doNotTrack isnt '1'
@@ -55,13 +55,16 @@ do ->
     ref = document.referrer if document.referrer.indexOf(hostname) < 0
     console.log 'referrer:', ref
     data = id: uuid(), path: path, sid: sid, ref: ref
-    encrData = encryptECIES config.pk, JSON.stringify data
+    # encrData = await eccrypto.encrypt config.pk, JSON.stringify data
     console.log 'sending data: ', data
     console.log 'sending encrypted data: ', encrData
-    await log.append(encrData)
+    # await log.append(encrData || {})
+    return
 
-  window.agaze = ->
-    funcs = 'configure': configure, 'sendPageview': sendPageview
+  window.agaze = () ->
+    console.log 'agazing'
     args = [].slice.call(arguments)
     c = args.shift()
-    funcs[c].apply this, args
+    funcs[c].apply(this, args)
+    return
+  return

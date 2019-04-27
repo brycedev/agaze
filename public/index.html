@@ -12,23 +12,6 @@
       <strong>We're sorry but agaze doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
     <div id="app"></div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ipfs/0.33.0/index.min.js"></script>
-    <script>
-      (function (d, w, u, h, s, m) {
-        w[h] = w[h] || function () {
-          (w[h].q = w[h].q || []).push(arguments)
-        }
-        s = d.createElement('script')
-        m = d.getElementsByTagName('script')[0]
-        s.async = 1
-        s.src = u
-        m.parentNode.insertBefore(s, m)
-      })(document, window, '/js/agaze.js', 'agaze')
-      agaze('configure', '123', '456')
-      setTimeout(() => {
-        agaze('sendPageview')
-      }, 3000);
-    </script>
     <script src="https://unpkg.com/ionicons@4.5.5/dist/ionicons.js"></script>
   </body>
 </html>

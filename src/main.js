@@ -4,6 +4,8 @@ import router from './router'
 import stash from 'vue-stash'
 import './registerServiceWorker'
 
+window.dayjs = require('dayjs')
+
 Vue.config.productionTip = false
 Vue.use(stash)
 window.uuid = ((a, b) => {
