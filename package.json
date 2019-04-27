@@ -12,8 +12,6 @@
     "crypto": "^1.0.1",
     "dayjs": "^1.8.12",
     "eccrypto": "^1.1.1",
-    "ecies-parity": "^0.1.0",
-    "elliptic": "^6.4.1",
     "ipfs": "^0.34.4",
     "ipfs-log": "^4.2.0",
     "orbit-db-identity-provider": "0.0.3",

@@ -1,6 +1,7 @@
 const path = require('path')
 
 module.exports = {
+  mode: 'production',
   entry: {
     agaze: path.resolve("src/lib/agaze.coffee")
   },
@@ -9,11 +10,7 @@ module.exports = {
       {
         test: /\.coffee$/,
         loader: "coffee-loader"
-      },
-      {
-        test: /\.js$/,
-        loader: 'babel-loader',
-      },
+      }
     ]
   },
   resolve: {

@@ -4,7 +4,6 @@ import Log from 'ipfs-log'
 
 do ->
   config = { li: '', pk: '' }
-  funcs = 'configure': configure, 'sendPageview': sendPageview
   ipfs = null
   log = null
   sid = sessionStorage.getItem('agaze:sid')
@@ -25,7 +24,7 @@ do ->
     config.pk = pubkey
     sessionStorage.setItem('agaze:sid', uuid()) unless sid?
     sid = sessionStorage.getItem('agaze:sid')
-    # await boot()
+    await boot()
     log = new Log(ipfs, null, { logId: config.li })
     return
 
@@ -55,15 +54,15 @@ do ->
     ref = document.referrer if document.referrer.indexOf(hostname) < 0
     console.log 'referrer:', ref
     data = id: uuid(), path: path, sid: sid, ref: ref
-    # encrData = await eccrypto.encrypt config.pk, JSON.stringify data
+    encrData = await eccrypto.encrypt config.pk, JSON.stringify data
     console.log 'sending data: ', data
     console.log 'sending encrypted data: ', encrData
-    # await log.append(encrData || {})
+    await log.append(encrData || {})
     return
 
-  window.agaze = () ->
-    console.log 'agazing'
-    args = [].slice.call(arguments)
+  window.agaze = (args...) ->
+    funcs = 'configure': configure, 'sendPageview': sendPageview
+    args = args[1..-1]
     c = args.shift()
     funcs[c].apply(this, args)
     return
