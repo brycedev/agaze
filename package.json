@@ -4,11 +4,16 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "coffee --no-header -o src/lib -c src/lib && webpack --config src/lib/webpack.config.js"
+    "build": "coffee --no-header -o src/lib -c src/lib && webpack --config src/lib/webpack.config.js -o public/js/agaze.js"
   },
   "dependencies": {
     "blockstack": "^19.0.0",
     "chart.js": "^2.8.0",
+    "crypto": "^1.0.1",
+    "dayjs": "^1.8.12",
+    "eccrypto": "^1.1.1",
+    "ecies-parity": "^0.1.0",
+    "elliptic": "^6.4.1",
     "ipfs": "^0.34.4",
     "ipfs-log": "^4.2.0",
     "orbit-db-identity-provider": "0.0.3",
