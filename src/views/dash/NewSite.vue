@@ -45,7 +45,8 @@ export default
       newSite.id = uuid('site')
       newSite.createdAt = Date.now()
       newSite.updatedAt = Date.now()
-      db = await orbit.create("agaze.#{@user.pk.slice(0,8)}.#{url.host}", 'docstore', { write: ['*']})
+      dbName = "agaze.#{@user.pk.slice(0,8)}.#{url.host}"
+      db = await orbit.create(dbName, 'docstore', { accessController: { write: ['*'], overwrite: true }})
       newSite.db = db.address.toString()
       @indices.sites.push newSite.id
       analytics = { events: [], pageviews: [] }

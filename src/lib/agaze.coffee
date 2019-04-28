@@ -2,7 +2,7 @@ OrbitDB = require('orbit-db')
 import { encryptECIES } from 'blockstack/lib/encryption'
 
 do ->
-  config = { db: '', pk: '' }
+  config = { pk: '' }
   ipfs = null
   log = null
   orbit = null
@@ -12,15 +12,13 @@ do ->
     new Promise (resolve, reject) ->
       ipfs = new Ipfs
         repo: 'agaze://.dev'
-        start: false
         EXPERIMENTAL:  pubsub: true
       ipfs.on 'error', (e) -> reject(e)
       ipfs.on 'ready', () ->
         orbit = new OrbitDB(ipfs)
         resolve()
 
-  configure = (addr, pubkey) ->
-    config.db = addr
+  configure = (pubkey) ->
     config.pk = pubkey
     sessionStorage.setItem('agaze:sid', uuid()) unless sid?
     sid = sessionStorage.getItem('agaze:sid')
@@ -29,9 +27,8 @@ do ->
     catch err
       console.log 'error booting ipfs :', err
     try
-      resolvedDb = "/orbitdb/#{config.db}/agaze.#{config.pk.slice(0,8)}.#{window.location.host}"
-      console.log resolvedDb
-      log = await orbit.open(resolvedDb)
+      dbName = "agaze.#{config.pk.slice(0,8)}.#{window.location.host}"
+      log = await orbit.docstore(dbName, { accessController: { write: ['*']}, overwrite: false })
     catch err
       console.log 'error opening orbit db :', err
     return
@@ -65,7 +62,7 @@ do ->
     console.log 'sending data: ', data
     try
       encrData = await encryptECIES config.pk, JSON.stringify data
-      await log.put(encrData || {})
+      await log.put({ _id: uuid('orbit'), data: encrData })
     catch err
       console.log err
     return

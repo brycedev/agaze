@@ -14,7 +14,7 @@ export default
   methods:
     loginWithBlockstack: -> @session.redirectToSignIn()
     setUser: ->
-      await @session.putFile "sites.json", JSON.stringify [], { encrypt : true }
+      # await @session.putFile "sites.json", JSON.stringify [], { encrypt : true }
       pubKey = null
       userData = @session.loadUserData()
       try
