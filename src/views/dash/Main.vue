@@ -16,10 +16,10 @@
             p.text-white.uppercase.tracking-wide.mb-4.text-sm Page Views
             h1.text-white.m-0.tracking-wide.text-6xl.font-normal(v-if="customPageViews") {{ customPageViews }}
             h1.text-white.m-0.tracking-wide.text-6xl.font-normal(v-else) {{ activeSite ? pageviews.length : 0 }}
-        div(class="w-full md:w-1/2")
-          .mx-4.rounded-lg.bg-agaze.flex.flex-col.p-6
-            p.text-white.uppercase.tracking-wide.mb-4.text-sm Avg. Time On Site
-            h1.text-white.m-0.tracking-wide.text-6xl.font-normal 0:00
+        //- div(class="w-full md:w-1/2")
+        //-   .mx-4.rounded-lg.bg-agaze.flex.flex-col.p-6
+        //-     p.text-white.uppercase.tracking-wide.mb-4.text-sm Avg. Time On Site
+        //-     h1.text-white.m-0.tracking-wide.text-6xl.font-normal 0:00
     .flex.justify-end.mx-4
       .flex.items-center.pb-6
         //- svg(class="fill-current text-white w-6 h-6 cursor-pointer mr-3 hover:opacity-100 opacity-75" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" :class="{'opacity-100' : !listView }" @click="listView = false")

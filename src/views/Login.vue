@@ -55,10 +55,7 @@ export default
           newSite.analytics.push(decryptedLytic) if !isLogged
         await @session.putFile "sites/analytics/#{site}.json", JSON.stringify newSite.analytics, { encrypt : true }
         @models.sites.push newSite
-      if @indices.sites[0]?
-        @$router.push({ name: 'Main', params: { id: @indices.sites[0] } })
-      else
-        @$router.push({ name: 'NewSite' })
+
   mounted: ->
     await @connectIpfs()
     scopes = ['store_write']
@@ -71,5 +68,10 @@ export default
       @setUser()
       return
     @session.redirectToSignIn() unless @session.isUserSignedIn()
-    @$router.push({ name: 'Dash' }) if @session.isUserSignedIn()
+    if @session.isUserSignedIn()
+      await @setUser()
+      if @indices.sites[0]?
+        @$router.push({ name: 'Main', params: { id: @indices.sites[0] } })
+      else
+        @$router.push({ name: 'NewSite' })
 </script>
