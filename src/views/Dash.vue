@@ -33,7 +33,7 @@
 
 <script lang="coffee">
 import MainChart from '../components/MainChart'
-
+isDev = process.env.NODE_ENV is 'development'
 export default
   store: ['session','models','indices','user']
   components: { MainChart }
@@ -42,7 +42,9 @@ export default
   computed:
     activeSite: -> (site for site in @models.sites when site.id is @$route.params.id)[0] || false
   methods:
-    logout: -> @session.signUserOut(window.location.host)
+    logout: ->
+      redirectTo = isDev ? 'localhost:8080' : 'https:://agaze.co'
+      @session.signUserOut(redirectTo)
   mounted: ->
   watch:
     $route: -> @sideMenuOpen = false
