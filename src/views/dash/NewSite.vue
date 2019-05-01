@@ -46,14 +46,13 @@ export default
       newSite.createdAt = Date.now()
       newSite.updatedAt = Date.now()
       dbName = "agaze.#{@user.pk.slice(0,8)}.#{url.host}"
-      db = await orbit.create(dbName, 'docstore', { accessController: { write: ['*'], overwrite: true }})
+      db = await orbit.create(dbName, 'docstore', { write: ['*'], overwrite: true })
       newSite.db = db.address.toString()
       @indices.sites.push newSite.id
-      analytics = { events: [], pageviews: [] }
       await @session.putFile "sites.json", JSON.stringify @indices.sites, { encrypt : true }
       await @session.putFile "sites/#{newSite.id}.json", JSON.stringify newSite, { encrypt : true }
-      await @session.putFile "sites/analytics/#{newSite.id}.json", JSON.stringify analytics, { encrypt : true }
-      newSite.analytics = analytics
+      await @session.putFile "sites/analytics/#{newSite.id}.json", JSON.stringify [], { encrypt : true }
+      newSite.analytics = []
       @models.sites.push newSite
       @$router.push({ name: 'Main', params: { id: newSite.id } })
 </script>

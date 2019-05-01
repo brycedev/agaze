@@ -1,33 +1,11 @@
 <template lang="pug">
-  router-view.overflow-hidden
+  router-view
 </template>
 
 <script lang="coffee">
 import { AppConfig, UserSession } from 'blockstack'
-import OrbitDB from 'orbit-db'
-
 export default
   store: ['session', 'user']
-  methods:
-    connectIpfs: () ->
-      new Promise (resolve, reject) ->
-        repoPath = 'agaze://.dev'
-        try
-          ipfs = new Ipfs
-            repo: repoPath
-            EXPERIMENTAL: { pubsub: true, sharding: false, dht: false }
-        catch err
-          console.log(err)
-          reject(err)
-        ipfs.on('error', (e) => console.error(e))
-        ipfs.on 'ready', () ->
-          window.orbit = new OrbitDB(ipfs)
-          resolve()
-  mounted: ->
-    await @connectIpfs()
-    origin = window.location.origin
-    confg = new AppConfig(['store_write'], origin, "/login")
-    @session = new UserSession({ appConfig: confg })
 </script>
 
 <style lang="stylus">

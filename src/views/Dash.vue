@@ -1,7 +1,7 @@
 <template lang="pug">
   .dash
-    .flex.min-h-screen.w-full.men-slide.z-50.bg-black.absolute.pin-l(:class="{'l-300' : sideMenuOpen}")
-      .container.flex.flex-col.flex-grow
+    .flex.min-h-screen.w-full.men-slide.z-50.bg-black.pin-l.fixed(:class="{'l-300' : sideMenuOpen}")
+      .container.flex.flex-col.flex-grow(class="px-8")
         nav.py-4.w-full.flex.items-center.justify-between.mb-8
           div(class="w-1/3")
             svg(class="fill-current text-white w-8 h-8 cursor-pointer" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" @click="sideMenuOpen = !sideMenuOpen" v-if="$route.name == 'Main'")
@@ -27,8 +27,8 @@
         router-link.no-underline.flex.justify-between.items-center.p-4.px-8.border-b.border-glass.text-white.tracking-wide.cursor-pointer.subtle(:to="{ name: 'NewSite'}" class="hover:bg-fog")
           p.text-xl.opacity-50 Add new site...
       .p-8.flex.items-center.justify-between
-        ion-icon.text-white.cursor-pointer.opacity-75.subtle(class="hover:opacity-100" name="ios-cog" size="large")
-        ion-icon.text-white.cursor-pointer.opacity-75.subtle(class="hover:opacity-100" name="log-out" size="large")
+        ion-icon.text-white.cursor-pointer.opacity-0.subtle(class="" name="ios-cog" size="large")
+        ion-icon.text-white.cursor-pointer.opacity-75.subtle(class="hover:opacity-100" name="log-out" size="large" @click="logout")
 </template>
 
 <script lang="coffee">
@@ -41,8 +41,9 @@ export default
     sideMenuOpen: false
   computed:
     activeSite: -> (site for site in @models.sites when site.id is @$route.params.id)[0] || false
+  methods:
+    logout: -> @session.signUserOut(window.location.host)
   mounted: ->
-
   watch:
     $route: -> @sideMenuOpen = false
 </script>

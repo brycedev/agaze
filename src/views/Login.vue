@@ -7,12 +7,28 @@
 
 <script lang="coffee">
 import { AppConfig, UserSession } from 'blockstack'
+import { decryptECIES } from 'blockstack/lib/encryption'
 import { getPublicKeyFromPrivate } from 'blockstack/lib/keys'
+import OrbitDB from 'orbit-db'
 
 export default
   store: ['indices', 'models', 'session', 'user']
   methods:
     loginWithBlockstack: -> @session.redirectToSignIn()
+    connectIpfs: () ->
+      new Promise (resolve, reject) ->
+        repoPath = 'agaze://.dev'
+        try
+          ipfs = new Ipfs
+            repo: repoPath
+            EXPERIMENTAL: pubsub: true
+          ipfs.on('error', (e) => console.error(e))
+          ipfs.on 'ready', () ->
+            window.orbit = new OrbitDB(ipfs)
+            resolve()
+        catch err
+          console.error(err)
+          reject(err)
     setUser: ->
       # await @session.putFile "sites.json", JSON.stringify [], { encrypt : true }
       pubKey = null
@@ -31,12 +47,23 @@ export default
       for key, site of @indices.sites
         newSite = JSON.parse(await @session.getFile "sites/#{site}.json", { decrypt : true })
         newSite.analytics = JSON.parse(await @session.getFile "sites/analytics/#{site}.json", { decrypt : true })
+        db = await orbit.docstore(newSite.db)
+        await db.load()
+        analytics = db.query (doc) -> doc
+        for lytic in analytics
+          uniqOrbitId = lytic._id
+          decryptedLytic = JSON.parse(decryptECIES(@user.apk, lytic.data))
+          decryptedLytic._id = uniqOrbitId
+          isLogged = (newSite.analytics.map (l) -> l._id).includes(uniqOrbitId)
+          newSite.analytics.push(decryptedLytic) if !isLogged
+        await @session.putFile "sites/analytics/#{site}.json", JSON.stringify newSite.analytics, { encrypt : true }
         @models.sites.push newSite
       if @indices.sites[0]?
         @$router.push({ name: 'Main', params: { id: @indices.sites[0] } })
       else
         @$router.push({ name: 'NewSite' })
   mounted: ->
+    await @connectIpfs()
     confg = new AppConfig(['store_write'], origin, "/login")
     @session = new UserSession({ appConfig: confg })
     @$router.push({ name: 'Dash' }) if @session.isUserSignedIn()
