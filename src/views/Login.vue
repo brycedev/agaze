@@ -39,7 +39,7 @@ export default
       @user.did = userData.decentralizedID
       @user.pk = pubKey
       @user.username = userData.profile?.name || userData.username || userData.identityAddress
-      @user.avatar = userData.profile?.image?[0]?.contentUrl || 'https://picsum.photos/100'
+      @user.avatar = userData.profile?.image[0]?.contentUrl || 'https://picsum.photos/100'
       @indices.sites = JSON.parse await @session.getFile "sites.json", { decrypt : true } || []
       for key, site of @indices.sites
         newSite = JSON.parse(await @session.getFile "sites/#{site}.json", { decrypt : true })
@@ -55,7 +55,6 @@ export default
           newSite.analytics.push(decryptedLytic) if !isLogged
         await @session.putFile "sites/analytics/#{site}.json", JSON.stringify newSite.analytics, { encrypt : true }
         @models.sites.push newSite
-
   mounted: ->
     await @connectIpfs()
     scopes = ['store_write']
