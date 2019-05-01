@@ -69,7 +69,11 @@ export default
     if @session.isSignInPending()
       await @session.handlePendingSignIn()
       @$router.push({ name: @$route.name })
-      @setUser()
+      await @setUser()
+      if @indices.sites[0]?
+        @$router.push({ name: 'Main', params: { id: @indices.sites[0] } })
+      else
+        @$router.push({ name: 'NewSite' })
       return
     @session.redirectToSignIn() unless @session.isUserSignedIn()
     if @session.isUserSignedIn()
