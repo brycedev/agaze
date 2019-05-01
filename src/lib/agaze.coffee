@@ -12,7 +12,10 @@ do ->
     new Promise (resolve, reject) ->
       ipfs = new Ipfs
         repo: 'agaze://.dev'
-        EXPERIMENTAL:  pubsub: true
+        EXPERIMENTAL: pubsub: true
+        config:
+          Addresses:
+            Swarm: ['/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-websocket-star']
       ipfs.on 'error', (e) -> reject(e)
       ipfs.on 'ready', () ->
         orbit = new OrbitDB(ipfs)
@@ -28,7 +31,8 @@ do ->
       console.log 'error booting ipfs :', err
     try
       dbName = "agaze.#{config.pk.slice(0,8)}.#{window.location.host}"
-      log = await orbit.docstore(dbName, { accessController: { write: ['*']}, overwrite: false })
+      log = await orbit.docstore(dbName, { write: ['*'], overwrite: false })
+      console.log log
     catch err
       console.log 'error opening orbit db :', err
     return
@@ -43,11 +47,8 @@ do ->
 
   sendPageview = (data) ->
     console.log 'attempting to send pageview'
-    return unless log?
+    return unless log? && config.pk !== ''
     req = window.location
-    # console.log 'req:', req
-    # console.log 'should we track? : ', navigator.doNotTrack isnt '1'
-    # console.log 'retreating' if navigator.doNotTrack is '1'
     # return if navigator.doNotTrack is '1' <-- turn this on in prod
     return if document.visibilityState? is 'prerender'
     return if req.host is ''
@@ -56,13 +57,12 @@ do ->
     path = '/' unless path?
     hostname = "#{req.protocol}//#{req.hostname}"
     ref = false
-    ref = document.referrer if document.referrer.indexOf(hostname) < 0
+    ref = document.referrer if document.referrer.indexOf(req.host) < 0
     # console.log 'referrer:', ref
-    data = id: uuid(), path: path, sid: sid, ref: ref
-    console.log 'sending data: ', data
+    data = id: uuid(), path: path, sid: sid, ref: ref, ts:Date.now(), type: 'view'
     try
       encrData = await encryptECIES config.pk, JSON.stringify data
-      await log.put({ _id: uuid('orbit'), data: encrData })
+      hash = await log.put({ _id: uuid('orbit'), data: encrData })
     catch err
       console.log err
     return
