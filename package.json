@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "coffee --no-header -o src/lib -c src/lib && webpack --config src/lib/webpack.config.js -o public/js/agaze.js"
+    "coffee": "coffee --no-header -o src/lib -c src/lib && webpack --config src/lib/webpack.config.js -o public/js/agaze.js",
+    "build": "vue-cli-service build --modern"
   },
   "dependencies": {
     "blockstack": "^19.1.0",
