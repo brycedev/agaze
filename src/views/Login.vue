@@ -7,6 +7,7 @@ import { AppConfig, UserSession } from 'blockstack'
 import { decryptECIES } from 'blockstack/lib/encryption'
 import { getPublicKeyFromPrivate } from 'blockstack/lib/keys'
 import OrbitDB from 'orbit-db'
+isDev = process.env.NODE_ENV is 'development'
 
 export default
   store: ['indices', 'models', 'session', 'user']
@@ -60,12 +61,15 @@ export default
         @$router.push({ name: 'NewSite' })
   mounted: ->
     await @connectIpfs()
-    confg = new AppConfig(['store_write', 'publish_data'], origin, "/login")
+    scopes = ['store_write']
+    scopes = ['store_write', 'publish_data'] if !isDev
+    confg = new AppConfig(scopes, origin, "/login")
     @session = new UserSession({ appConfig: confg })
-    @session.redirectToSignIn() unless @session.isUserSignedIn()
-    @$router.push({ name: 'Dash' }) if @session.isUserSignedIn()
     if @session.isSignInPending()
       await @session.handlePendingSignIn()
       @$router.push({ name: @$route.name })
       @setUser()
+      return
+    @session.redirectToSignIn() unless @session.isUserSignedIn()
+    @$router.push({ name: 'Dash' }) if @session.isUserSignedIn()
 </script>
