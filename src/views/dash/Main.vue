@@ -10,12 +10,12 @@
         div(class="w-full md:w-1/3")
           .mx-4.rounded-lg.bg-agaze.flex.flex-col.p-6
             p.text-white.uppercase.tracking-wide.mb-4.text-sm Site Visits
-            h1.text-white.m-0.tracking-wide.text-6xl.font-normal 0
+            h1.text-white.m-0.tracking-wide.text-6xl.font-normal {{ Object.keys(statsBySession).length }}
         div(class="w-full md:w-1/3")
           .mx-4.rounded-lg.bg-agaze.flex.flex-col.p-6
             p.text-white.uppercase.tracking-wide.mb-4.text-sm Page Views
             h1.text-white.m-0.tracking-wide.text-6xl.font-normal(v-if="customPageViews") {{ customPageViews }}
-            h1.text-white.m-0.tracking-wide.text-6xl.font-normal(v-else) {{ activeSite ? activeSite.analytics.pageviews.length : 0 }}
+            h1.text-white.m-0.tracking-wide.text-6xl.font-normal(v-else) {{ activeSite ? pageviews.length : 0 }}
         div(class="w-full md:w-1/3")
           .mx-4.rounded-lg.bg-agaze.flex.flex-col.p-6
             p.text-white.uppercase.tracking-wide.mb-4.text-sm Avg. Time On Site
@@ -30,26 +30,14 @@
     .flex.mx-4(v-else)
       .mr-2(class="w-1/2")
         p.w-full.bg-slate.py-2.text-white.uppercase.px-4.rounded Pages
-        .flex.justify-between.items-center.p-4.border-b.border-glass.text-white.tracking-wide.cursor-pointer.rounded.subtle(class="hover:bg-fog")
-          p /
-          p 217
+        .flex.justify-between.items-center.p-4.border-b.border-glass.text-white.tracking-wide.cursor-pointer.rounded.subtle(class="hover:bg-fog" v-for="path in Object.keys(statsByPath)")
+          p {{ path }}
+          p {{ statsByPath[path].length }}
       .ml-2(class="w-1/2")
         p.w-full.bg-slate.py-2.text-white.uppercase.px-4.rounded Referrers
-        .flex.justify-between.items-center.p-4.border-b.border-glass.text-white.tracking-wide.cursor-pointer.rounded.subtle(class="hover:bg-fog")
-          p ---
-          p 190
-        .flex.justify-between.items-center.p-4.border-b.border-glass.text-white.tracking-wide.cursor-pointer.rounded.subtle(class="hover:bg-fog")
-          p producthunt.com
-          p 15
-        .flex.justify-between.items-center.p-4.border-b.border-glass.text-white.tracking-wide.cursor-pointer.rounded.subtle(class="hover:bg-fog")
-          p apple.com
-          p 7
-        .flex.justify-between.items-center.p-4.border-b.border-glass.text-white.tracking-wide.cursor-pointer.rounded.subtle(class="hover:bg-fog")
-          p socialmediaexaminer.com
-          p 4
-        .flex.justify-between.items-center.p-4.border-b.border-glass.text-white.tracking-wide.cursor-pointer.rounded.subtle(class="hover:bg-fog")
-          p fanburst.com
-          p 1
+        .flex.justify-between.items-center.p-4.border-b.border-glass.text-white.tracking-wide.cursor-pointer.rounded.subtle(class="hover:bg-fog" v-for="ref in Object.keys(statsByReferrer)")
+          p {{ ref }}
+          p {{ statsByReferrer[ref].length }}
 </template>
 
 <script lang="coffee">
@@ -60,19 +48,43 @@ export default
   components: { MainChart }
   computed:
     activeSite: -> (site for site in @models.sites when site.id is @$route.params.id)[0] || false
+    events: -> (a for a in @stats when a.type is 'event')
+    pageviews: ->  (a for a in @stats when a.type is 'view')
+    lytics: -> @activeSite?.analytics || []
     stats: ->
       if @activeSite?
         switch @timePeriod
           when 'today'
-            (a for a in @activeSite?.analytics?.pageviews when dayjs().isSame(a.ts, 'day'))
+            (a for a in @lytics when dayjs().isSame(a.ts, 'day'))
           when 'week'
-            (a for a in @activeSite?.analytics?.pageviews when dayjs().isSame(a.ts, 'day'))
+            (a for a in @lytics when dayjs().isSame(a.ts, 'week'))
           when 'month'
-            (a for a in @activeSite?.analytics?.pageviews when dayjs().isSame(a.ts, 'day'))
-          when 'today'
-            (a for a in @activeSite?.analytics?.pageviews when dayjs().isSame(a.ts, 'day'))
+            (a for a in @lytics when dayjs().isSame(a.ts, 'month'))
+          when 'year'
+            (a for a in @lytics when dayjs().isSame(a.ts, 'year'))
       else
-        return false
+        return []
+    statsByPath: ->
+      @stats.reduce (paths, lytic) ->
+        paths[lytic.path] = [] if(!paths[lytic.path])
+        paths[lytic.path].push lytic
+        paths
+      , {}
+    statsBySession: ->
+      @stats.reduce (sids, lytic) ->
+        sids[lytic.sid] = [] if(!sids[lytic.sid])
+        sids[lytic.sid].push lytic
+        sids
+      , {}
+    statsByReferrer: ->
+      hasRefs = @stats.filter (lytic) -> lytic.ref isnt false and lytic.ref isnt ''
+      hasRefs.reduce (refs, lytic) ->
+        refs[lytic.ref] = [] if(!refs[lytic.ref])
+        refs[lytic.ref].push lytic
+        refs
+      , {}
+  methods:
+    statsForSessionId: (sid) -> (a for a in @stats when a.sid is sid)
   data: ->
     customPageViews: null,
     listView: false,
