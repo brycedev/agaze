@@ -60,7 +60,7 @@ export default
         @$router.push({ name: 'NewSite' })
   mounted: ->
     await @connectIpfs()
-    confg = new AppConfig(['store_write'], origin, "/login")
+    confg = new AppConfig(['store_write', 'publish_data'], origin, "/login")
     @session = new UserSession({ appConfig: confg })
     @session.redirectToSignIn() unless @session.isUserSignedIn()
     @$router.push({ name: 'Dash' }) if @session.isUserSignedIn()
