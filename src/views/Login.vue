@@ -1,8 +1,5 @@
 <template lang="pug">
   .bg-black.min-h-screen.w-full.absolute
-    .flex.min-h-screen.w-full.items-center.justify-center
-      .rounded-lg.bg-agaze.text-white.p-6.cursor-pointer(@click="loginWithBlockstack()")
-        p.font-light.text-lg Login
 </template>
 
 <script lang="coffee">
