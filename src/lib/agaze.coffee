@@ -47,7 +47,7 @@ do ->
 
   sendPageview = (data) ->
     console.log 'attempting to send pageview'
-    return unless log? && config.pk !== ''
+    return unless log? && config.pk isnt ''
     req = window.location
     # return if navigator.doNotTrack is '1' <-- turn this on in prod
     return if document.visibilityState? is 'prerender'
