@@ -28,13 +28,12 @@ do ->
     try
       await boot()
     catch err
-      console.log 'error booting ipfs :', err
+      # console.log 'error booting ipfs :', err
     try
       dbName = "agaze.#{config.pk.slice(0,8)}.#{window.location.host}"
       log = await orbit.docstore(dbName, { write: ['*'], overwrite: false })
-      console.log log
     catch err
-      console.log 'error opening orbit db :', err
+      # console.log 'error opening orbit db :', err
     return
 
   uuid = () ->
@@ -46,25 +45,23 @@ do ->
     l.replace(/-/g, "")
 
   sendPageview = (data) ->
-    console.log 'attempting to send pageview'
     return unless log? && config.pk isnt ''
     req = window.location
-    # return if navigator.doNotTrack is '1' <-- turn this on in prod
+    return if navigator.doNotTrack is '1'
     return if document.visibilityState? is 'prerender'
     return if req.host is ''
-    # return if req.protocol isnt 'https' <-- turn this on in prod
+    return if req.protocol isnt 'https'
     path = req.pathname + req.search
     path = '/' unless path?
     hostname = "#{req.protocol}//#{req.hostname}"
     ref = false
     ref = document.referrer if document.referrer.indexOf(req.host) < 0
-    # console.log 'referrer:', ref
     data = id: uuid(), path: path, sid: sid, ref: ref, ts:Date.now(), type: 'view'
     try
       encrData = await encryptECIES config.pk, JSON.stringify data
       hash = await log.put({ _id: uuid('orbit'), data: encrData })
     catch err
-      console.log err
+      console.error err
     return
 
   window.agaze = (args...) ->
