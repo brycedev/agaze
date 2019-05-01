@@ -36,12 +36,15 @@ export default
       catch err
         pubKey = getPublicKeyFromPrivate(userData.appPrivateKey)
         await @session.putFile 'key.txt', pubKey, { encrypt : true }
+      try
+        @indices.sites = JSON.parse await @session.getFile "sites.json", { decrypt : true }
+      catch err
+        @indices.sites = []
       @user.apk = userData.appPrivateKey
       @user.did = userData.decentralizedID
       @user.pk = pubKey
       @user.username = userData.profile?.name || userData.username || userData.identityAddress
       @user.avatar = userData.profile?.image[0]?.contentUrl || 'https://picsum.photos/100'
-      @indices.sites = JSON.parse await @session.getFile "sites.json", { decrypt : true } || []
       for key, site of @indices.sites
         newSite = JSON.parse(await @session.getFile "sites/#{site}.json", { decrypt : true })
         newSite.analytics = JSON.parse(await @session.getFile "sites/analytics/#{site}.json", { decrypt : true })
