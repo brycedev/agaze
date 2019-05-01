@@ -1,8 +1,5 @@
 <template lang="pug">
   .bg-black.min-h-screen.w-full.absolute
-    .flex.min-h-screen.w-full.items-center.justify-center
-      .rounded-lg.bg-agaze.text-white.p-6.cursor-pointer(@click="loginWithBlockstack()")
-        p.font-light.text-lg Login
 </template>
 
 <script lang="coffee">
@@ -14,7 +11,6 @@ import OrbitDB from 'orbit-db'
 export default
   store: ['indices', 'models', 'session', 'user']
   methods:
-    loginWithBlockstack: -> @session.redirectToSignIn()
     connectIpfs: () ->
       new Promise (resolve, reject) ->
         repoPath = 'agaze://.dev'
@@ -66,8 +62,8 @@ export default
     await @connectIpfs()
     confg = new AppConfig(['store_write'], origin, "/login")
     @session = new UserSession({ appConfig: confg })
+    @session.redirectToSignIn() unless @session.isUserSignedIn()
     @$router.push({ name: 'Dash' }) if @session.isUserSignedIn()
-    @setUser() if !@session.isSignInPending()
     if @session.isSignInPending()
       await @session.handlePendingSignIn()
       @$router.push({ name: @$route.name })
