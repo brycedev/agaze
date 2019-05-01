@@ -15,7 +15,7 @@
         p.my-4.text-white.leading-loose.opacity-75 The agaze software does not store any cookies or utilize any  pixels to follow your users around the web. In fact, no personally identifiable information is ever made available to the website owner.
       div.mx-auto.max-w-md.mb-8.text-white
         h3.my-1.text-xl.inline-block Minimal
-        p.my-4.text-white.leading-loose.opacity-75 Just drop in the Javascript we provide, and we will handle the rest. Once the script is loaded, you can fire off pageviews and events at will.
+        p.my-4.text-white.leading-loose.opacity-75 No frills or fluff; just page visits and referrers. Just drop in the Javascript we provide, and we will handle the heavy lifting. Once the script is loaded, you can fire off pageviews and events (soon) at will.
       div.mx-auto.max-w-md.mb-8.text-white
         h3.my-1.text-xl.inline-block Free
         p.my-4.text-white.leading-loose.opacity-75 We don't charge users to utilize our software. If you'd like to create an account, it's free and all features are available. The software is also open source so you may improve it if needed.

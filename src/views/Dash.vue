@@ -4,16 +4,14 @@
       .container.flex.flex-col.flex-grow(class="px-8")
         nav.py-4.w-full.flex.items-center.justify-between.mb-8
           div(class="w-1/3")
-            svg(class="fill-current text-white w-8 h-8 cursor-pointer" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" @click="sideMenuOpen = !sideMenuOpen" v-if="$route.name == 'Main'")
+            svg(class="fill-current text-white w-8 h-8 cursor-pointer" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" @click="sideMenuOpen = !sideMenuOpen")
               path(d="M80 280h256v48H80zM80 184h320v48H80zM80 88h352v48H80z")
                 g
                   path(d="M80 376h288v48H80z")
-            svg(class="fill-current text-white w-12 h-12 cursor-pointer" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" v-if="$route.name !== 'Main'" @click="$router.go(-1)")
-              path(d="M216.4 163.7c5.1 5 5.1 13.3.1 18.4L155.8 243h231.3c7.1 0 12.9 5.8 12.9 13s-5.8 13-12.9 13H155.8l60.8 60.9c5 5.1 4.9 13.3-.1 18.4-5.1 5-13.2 5-18.3-.1l-82.4-83c-1.1-1.2-2-2.5-2.7-4.1-.7-1.6-1-3.3-1-5 0-3.4 1.3-6.6 3.7-9.1l82.4-83c4.9-5.2 13.1-5.3 18.2-.3z")
-          div(class="w-1/3 flex items-center justify-center")
+          div.cursor-pointer(class="w-1/3 flex items-center justify-center")
             h1.font-light.text-white.text-normal.tracking-wide.leading-none.pb-4 agāze
           div(class="w-1/3 bg-transparent flex items-center justify-end")
-            p.text-white.uppercase.tracking-wide.text-sm.opacity-75(v-if="$route.name !== 'NewSite' && activeSite") {{ activeSite.url }}
+            p.cursor-pointer.text-white.uppercase.tracking-wide.text-sm.opacity-75(class="hover:opacity-100" v-if="$route.name !== 'NewSite' && activeSite" @click="showSiteModal = true") {{ activeSite.url }}
         .flex-grow
           router-view
     .fixed.pin-l.pin-b.pin-t.w-300.z-0.opacity-0.subtle.flex.flex-col(:class="{'opacity-100' : sideMenuOpen, 'pointer-events-none' : !sideMenuOpen}")
@@ -27,8 +25,25 @@
         router-link.no-underline.flex.justify-between.items-center.p-4.px-8.border-b.border-glass.text-white.tracking-wide.cursor-pointer.subtle(:to="{ name: 'NewSite'}" class="hover:bg-fog")
           p.text-xl.opacity-50 Add new site...
       .p-8.flex.items-center.justify-between
-        ion-icon.text-white.cursor-pointer.opacity-0.subtle(class="" name="ios-cog" size="large")
+        ion-icon.text-white.cursor-pointer.opacity-75.subtle(class="hover:opacity-100" name="ios-cog" size="large" @click="showSiteModal = true")
         ion-icon.text-white.cursor-pointer.opacity-75.subtle(class="hover:opacity-100" name="log-out" size="large" @click="logout")
+    div(class="subtle pin max-h-screen overflow-hidden h-screen fixed w-full bg-fog z-max flex items-center justify-center" @click.self="showSiteModal = false" :class="{'pointer-events-auto opacity-100' : showSiteModal, 'pointer-events-none opacity-0' : !showSiteModal}")
+      .bg-white.rounded-lg.mb-4.shadow.max-w-md.w-full
+        .flex.flex-col.p-6.text-agaze
+          h3.font-light.mb-4 Site Configuration
+          .flex.flex-col.w-full.py-4
+            p.font-light.text-md.mb-4.text-grey-darker 1) Place script in site.
+            pre.overflow-scroll(class="resize-none subtle rounded-lg bg-grey-dark appearance-none w-full px-4 py-3 focus:outline-none outline-none text-base font-light text-white" readonly) {{ script }}
+          .flex.flex-col.w-full.py-4
+            p.font-light.text-md.mb-4.text-grey-darker 2) Configure your agaze connection.
+            pre.overflow-scroll(class="resize-none subtle rounded-lg bg-grey-dark appearance-none w-full px-4 py-3 focus:outline-none outline-none text-base font-light text-white" readonly) {{ configure }}
+          .flex.flex-col.w-full.py-4
+            p.font-light.text-md.mb-4.text-grey-darker 3) Send a pageview.
+            pre.overflow-scroll(class="resize-none subtle rounded-lg bg-grey-dark appearance-none w-full px-4 py-3 focus:outline-none outline-none text-base font-light text-white" readonly) {{ sendView }}
+          //- div.flex.justify-end.items-center
+          //-   div.bg-red-light.subtle.p-2.rounded.flex.items-center.cursor-pointer(class="hover:bg-red" @click="deleteActiveSite")
+          //-     ion-icon.text-lg.mr-2.text-white(name="trash")
+          //-     span.font-light.text-white Delete
 </template>
 
 <script lang="coffee">
@@ -39,9 +54,14 @@ export default
   components: { MainChart }
   data: ->
     sideMenuOpen: false
+    showSiteModal: false
   computed:
     activeSite: -> (site for site in @models.sites when site.id is @$route.params.id)[0] || false
+    script: -> '<script src=\"https:\/\/unpkg.com\/ipfs@0.33.0\/dist\/index.min.js\"><\/script>\n<script>\r\n(function (g, a, z, u, m, p) {\r\n    a[u] = a[u] || function () {\r\n  (a[u].q = a[u].q || []).push(arguments)\r\n  };\r\n  m = g.createElement(\'script\'),\r\n  p = g.getElementsByTagName(\'script\')[0];\r\n  m.async = 1; m.src = z; m.id = \'agzscrpt\';\r\n  p.parentNode.insertBefore(m, p)\r\n})(document, window, \'https:\/\/agaze.co\/js\/agaze.js\', \'agaze\');\r\n<\/script>'
+    configure: -> "agaze('configure', '#{@user.pk}')"
+    sendView: -> "agaze('sendPageview')"
   methods:
+    deleteActiveSite: ->
     logout: ->
       redirectTo = isDev ? 'localhost:8080' : 'https:://agaze.co'
       @session.signUserOut(redirectTo)

@@ -10,6 +10,7 @@ import { AppConfig, UserSession } from 'blockstack'
 import { decryptECIES } from 'blockstack/lib/encryption'
 import { getPublicKeyFromPrivate } from 'blockstack/lib/keys'
 import OrbitDB from 'orbit-db'
+isDev = process.env.NODE_ENV is 'development'
 
 export default
   store: ['indices', 'models', 'session', 'user']
@@ -58,18 +59,23 @@ export default
           newSite.analytics.push(decryptedLytic) if !isLogged
         await @session.putFile "sites/analytics/#{site}.json", JSON.stringify newSite.analytics, { encrypt : true }
         @models.sites.push newSite
-      if @indices.sites[0]?
-        @$router.push({ name: 'Main', params: { id: @indices.sites[0] } })
-      else
-        @$router.push({ name: 'NewSite' })
+
   mounted: ->
     await @connectIpfs()
-    confg = new AppConfig(['store_write'], origin, "/login")
+    scopes = ['store_write']
+    scopes = ['store_write', 'publish_data'] if !isDev
+    confg = new AppConfig(scopes, origin, "/login")
     @session = new UserSession({ appConfig: confg })
-    @$router.push({ name: 'Dash' }) if @session.isUserSignedIn()
-    @setUser() if !@session.isSignInPending()
     if @session.isSignInPending()
       await @session.handlePendingSignIn()
       @$router.push({ name: @$route.name })
       @setUser()
+      return
+    @session.redirectToSignIn() unless @session.isUserSignedIn()
+    if @session.isUserSignedIn()
+      await @setUser()
+      if @indices.sites[0]?
+        @$router.push({ name: 'Main', params: { id: @indices.sites[0] } })
+      else
+        @$router.push({ name: 'NewSite' })
 </script>
