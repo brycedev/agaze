@@ -40,6 +40,7 @@ export default
         @indices.sites = JSON.parse await @session.getFile "sites.json", { decrypt : true }
       catch err
         @indices.sites = []
+      @indices.sites = [] unless @indices.sites?
       @user.apk = userData.appPrivateKey
       @user.did = userData.decentralizedID
       @user.pk = pubKey
