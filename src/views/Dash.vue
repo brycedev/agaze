@@ -11,7 +11,7 @@
           div.cursor-pointer(class="w-1/3 flex items-center justify-center")
             h1.font-light.text-white.text-normal.tracking-wide.leading-none.pb-4 agāze
           div(class="w-1/3 bg-transparent flex items-center justify-end")
-            p.cursor-pointer.text-white.uppercase.tracking-wide.text-sm.opacity-75(class="hover:opacity-100" v-if="$route.name !== 'NewSite' && activeSite" @click="showSiteModal = true") {{ activeSite.url }}
+            p.cursor-pointer.text-white.uppercase.tracking-wide.text-sm.opacity-75(class="hover:opacity-100" v-if="$route.name !== 'NewSite' && activeSite" @click="openSiteModal") {{ activeSite.url }}
         .flex-grow
           router-view
     .fixed.pin-l.pin-b.pin-t.w-300.z-0.opacity-0.subtle.flex.flex-col(:class="{'opacity-100' : sideMenuOpen, 'pointer-events-none' : !sideMenuOpen}")
@@ -25,7 +25,7 @@
         router-link.no-underline.flex.justify-between.items-center.p-4.px-8.border-b.border-glass.text-white.tracking-wide.cursor-pointer.subtle(:to="{ name: 'NewSite'}" class="hover:bg-fog")
           p.text-xl.opacity-50 Add new site...
       .p-8.flex.items-center.justify-between
-        ion-icon.text-white.cursor-pointer.opacity-75.subtle(class="hover:opacity-100" name="ios-cog" size="large" @click="showSiteModal = true")
+        ion-icon.text-white.cursor-pointer.opacity-75.subtle(class="hover:opacity-100" name="ios-cog" size="large" @click="openSiteModal")
         ion-icon.text-white.cursor-pointer.opacity-75.subtle(class="hover:opacity-100" name="log-out" size="large" @click="logout")
     div(class="subtle pin max-h-screen overflow-scroll h-screen fixed w-full bg-fog z-max flex items-center justify-center" @click.self="showSiteModal = false" :class="{'pointer-events-auto opacity-100' : showSiteModal, 'pointer-events-none opacity-0' : !showSiteModal}")
       .bg-white.rounded-lg.mb-4.shadow.max-w-md.w-full
@@ -35,7 +35,7 @@
             p.font-light.text-md.mb-4.text-grey-darker 1) Place script tags on your website.
             pre.overflow-scroll(class="resize-none subtle rounded-lg bg-grey-dark appearance-none w-full px-4 py-3 focus:outline-none outline-none text-base font-light text-white" readonly) {{ script }}
           .flex.flex-col.w-full.py-4
-            p.font-light.text-md.mb-4.text-grey-darker 2) Configure your Agaze connection.
+            p.font-light.text-md.mb-4.text-grey-darker 2) Configure your agāze connection.
             pre.overflow-scroll(class="resize-none subtle rounded-lg bg-grey-dark appearance-none w-full px-4 py-3 focus:outline-none outline-none text-base font-light text-white" readonly) {{ configure }}
           .flex.flex-col.w-full.py-4
             p.font-light.text-md.mb-4.text-grey-darker 3) Send a pageview.
@@ -62,12 +62,15 @@ export default
     sendView: -> "agaze('sendPageview')"
   methods:
     deleteActiveSite: ->
-
     logout: ->
       redirectTo = isDev ? 'localhost:8080' : 'https:://agaze.co'
-      @session.signUserOut(redirectTo)
-    openSiteModal: -> @showSiteModal = true
+      @session.signUserOut()
+      @$router.push name: 'Home'
+    openSiteModal: ->
+      return unless @$route.name is 'Main'
+      @showSiteModal = true
   mounted: ->
+    @$router.push name: 'Login' unless @session?
   watch:
     $route: -> @sideMenuOpen = false
 </script>
