@@ -27,23 +27,23 @@
       .p-8.flex.items-center.justify-between
         ion-icon.text-white.cursor-pointer.opacity-75.subtle(class="hover:opacity-100" name="ios-cog" size="large" @click="showSiteModal = true")
         ion-icon.text-white.cursor-pointer.opacity-75.subtle(class="hover:opacity-100" name="log-out" size="large" @click="logout")
-    div(class="subtle pin max-h-screen overflow-hidden h-screen fixed w-full bg-fog z-max flex items-center justify-center" @click.self="showSiteModal = false" :class="{'pointer-events-auto opacity-100' : showSiteModal, 'pointer-events-none opacity-0' : !showSiteModal}")
+    div(class="subtle pin max-h-screen overflow-scroll h-screen fixed w-full bg-fog z-max flex items-center justify-center" @click.self="showSiteModal = false" :class="{'pointer-events-auto opacity-100' : showSiteModal, 'pointer-events-none opacity-0' : !showSiteModal}")
       .bg-white.rounded-lg.mb-4.shadow.max-w-md.w-full
         .flex.flex-col.p-6.text-agaze
           h3.font-light.mb-4 Site Configuration
           .flex.flex-col.w-full.py-4
-            p.font-light.text-md.mb-4.text-grey-darker 1) Place script in site.
+            p.font-light.text-md.mb-4.text-grey-darker 1) Place script tags on your website.
             pre.overflow-scroll(class="resize-none subtle rounded-lg bg-grey-dark appearance-none w-full px-4 py-3 focus:outline-none outline-none text-base font-light text-white" readonly) {{ script }}
           .flex.flex-col.w-full.py-4
-            p.font-light.text-md.mb-4.text-grey-darker 2) Configure your agaze connection.
+            p.font-light.text-md.mb-4.text-grey-darker 2) Configure your Agaze connection.
             pre.overflow-scroll(class="resize-none subtle rounded-lg bg-grey-dark appearance-none w-full px-4 py-3 focus:outline-none outline-none text-base font-light text-white" readonly) {{ configure }}
           .flex.flex-col.w-full.py-4
             p.font-light.text-md.mb-4.text-grey-darker 3) Send a pageview.
-            pre.overflow-scroll(class="resize-none subtle rounded-lg bg-grey-dark appearance-none w-full px-4 py-3 focus:outline-none outline-none text-base font-light text-white" readonly) {{ sendView }}
-          //- div.flex.justify-end.items-center
-          //-   div.bg-red-light.subtle.p-2.rounded.flex.items-center.cursor-pointer(class="hover:bg-red" @click="deleteActiveSite")
-          //-     ion-icon.text-lg.mr-2.text-white(name="trash")
-          //-     span.font-light.text-white Delete
+            .overflow-scroll(class="resize-none subtle rounded-lg bg-grey-dark appearance-none w-full px-4 py-3 focus:outline-none outline-none text-base font-light text-white" readonly) {{ sendView }}
+          div.flex.justify-end.items-center
+            //- div.bg-red-light.subtle.p-2.rounded.flex.items-center.cursor-pointer(class="hover:bg-red" @click="deleteActiveSite")
+            //-   ion-icon.text-lg.mr-2.text-white(name="trash")
+            //-   span.font-light.text-white Delete
 </template>
 
 <script lang="coffee">
@@ -57,11 +57,12 @@ export default
     showSiteModal: false
   computed:
     activeSite: -> (site for site in @models.sites when site.id is @$route.params.id)[0] || false
-    script: -> '<script src=\"https:\/\/unpkg.com\/ipfs@0.34.4\/dist\/index.min.js\"><\/script>\n<script>\r\n(function (g, a, z, u, m, p) {\r\n    a[u] = a[u] || function () {\r\n  (a[u].q = a[u].q || []).push(arguments)\r\n  };\r\n  m = g.createElement(\'script\'),\r\n  p = g.getElementsByTagName(\'script\')[0];\r\n  m.async = 1; m.src = z; m.id = \'agzscrpt\';\r\n  p.parentNode.insertBefore(m, p)\r\n})(document, window, \'https:\/\/agaze.co\/js\/agaze.js\', \'agaze\');\r\n<\/script>'
-    configure: -> "agaze('configure', '#{@user.pk}')"
+    script: -> '<script src=\"https:\/\/unpkg.com\/ipfs@0.34.4\/dist\/index.min.js\"><\/script>\n<script src=\"https:\/\/agaze.co\/js\/agaze.js\"><\/script>'
+    configure: -> "await agaze('config', '#{@user.pk}')"
     sendView: -> "agaze('sendPageview')"
   methods:
     deleteActiveSite: ->
+
     logout: ->
       redirectTo = isDev ? 'localhost:8080' : 'https:://agaze.co'
       @session.signUserOut(redirectTo)
