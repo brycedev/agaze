@@ -9,10 +9,10 @@
     .px-4.flex-grow
       div.mx-auto.max-w-md.mb-8.text-white
         h3.my-1.text-xl.inline-block Data Privacy
-        p.my-4.text-white.leading-loose.opacity-75 Our primary focus in building Agaze, was to ensure that user data is not collected and used by large corporations. All analytics data captured is encrypted and only available for viewing by the website owner. No data is ever stored on a central server controlled by Agaze.
+        p.my-4.text-white.leading-loose.opacity-75 Our primary focus in building agāze, was to ensure that user data is not collected and used by large corporations. All analytics data captured is encrypted and only available for viewing by the website owner. No data is ever stored on a central server controlled by agāze.
       div.mx-auto.max-w-md.mb-8.text-white
         h3.my-1.text-xl.inline-block No Tracking
-        p.my-4.text-white.leading-loose.opacity-75 The agaze software does not store any cookies or utilize any  pixels to follow your users around the web. In fact, no personally identifiable information is ever made available to the website owner.
+        p.my-4.text-white.leading-loose.opacity-75 The agāze software does not store any cookies or utilize any  pixels to follow your users around the web. In fact, no personally identifiable information is ever made available to the website owner.
       div.mx-auto.max-w-md.mb-8.text-white
         h3.my-1.text-xl.inline-block Minimal
         p.my-4.text-white.leading-loose.opacity-75 No frills or fluff; just page visits and referrers. Just drop in the Javascript we provide, and we will handle the heavy lifting. Once the script is loaded, you can fire off pageviews and events (soon) at will.

@@ -2,7 +2,8 @@
   div.max-w-sm.flex.flex-col.mx-auto.h-full.justify-center.pb-16
     h1.text-white.tracking-wide.text-4xl.text-center.mb-12 Create a new site
     input(class="subtle border-2 border-transparent rounded focus:border-agaze bg-slate appearance-none w-full px-4 py-3 text-center leading-tight focus:outline-none outline-none text-2xl font-light text-white mb-8" placeholder="Enter a site label" v-model="label")
-    input(class="subtle border-2 border-transparent rounded focus:border-agaze bg-slate appearance-none w-full px-4 py-3 text-center leading-tight focus:outline-none outline-none text-2xl font-light text-white mb-8" placeholder="Enter a site url" @keydown.enter="submit()" v-model="url")
+    input(class="subtle border-2 border-transparent rounded focus:border-agaze bg-slate appearance-none w-full px-4 py-3 text-center leading-tight focus:outline-none outline-none text-2xl font-light text-white mb-4" placeholder="Enter a site url" @keydown.enter="submit()" v-model="url")
+    p.text-white.opacity-75.mb-4 Please include 'https://' in your url. agāze will only work on secure websites.
     button.rounded-lg.bg-agaze.text-white.cursor-pointer.px-4.py-3.text-2xl.opacity-50.subtle(@click="submit()" class="focus:outline-none" :class="{ 'opacity-100' : canSubmit }")
       p.font-light(v-if="!isSubmitting") Submit
       svg.w-6.fill-current.text-white.spin(xmlns='http://www.w3.org/2000/svg', viewBox='0 0 512 512' v-else)
@@ -46,7 +47,7 @@ export default
       newSite.createdAt = Date.now()
       newSite.updatedAt = Date.now()
       dbName = "agaze.#{@user.pk.slice(0,8)}.#{url.host}"
-      db = await orbit.create(dbName, 'docstore', { write: ['*'], overwrite: true })
+      db = await orbit.create(dbName, 'docstore', { accessController: { write: ['*'] }})
       newSite.db = db.address.toString()
       @indices.sites.push newSite.id
       await @session.putFile "sites.json", JSON.stringify @indices.sites, { encrypt : true }
