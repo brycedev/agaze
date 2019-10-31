@@ -14,28 +14,26 @@ export default
   methods:
     loginWithBlockstack: -> @session.redirectToSignIn()
     connectIpfs: () ->
-      new Promise (resolve, reject) ->
-        repoPath = 'agaze://.dev'
+      new Promise (resolve, reject) =>
         try
           ipfs = new Ipfs
-            repo: repoPath
-            EXPERIMENTAL: pubsub: true
+            config: Addresses: Swarm: ['/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-websocket-star']
+            preload: enabled: false
+            EXPERIMENTAL: pubsub: true, ipnsPubsub: true
           ipfs.on('error', (e) => console.error(e))
-          ipfs.on 'ready', () ->
-            window.orbit = new OrbitDB(ipfs)
+          ipfs.on 'ready', () =>
+            window.orbit = await OrbitDB.createInstance(ipfs)
             resolve()
         catch err
-          console.error(err)
           reject(err)
     setUser: ->
-      # await @session.putFile "sites.json", JSON.stringify [], { encrypt : true }
-      pubKey = null
       userData = @session.loadUserData()
       try
-        pubkey = JSON.parse await @session.getFile 'key.txt', { decrypt : true }
+        pubkey = await @session.getFile 'key.txt', { decrypt : false }
+        throw 'err' unless pubkey?
       catch err
-        pubKey = getPublicKeyFromPrivate(userData.appPrivateKey)
-        await @session.putFile 'key.txt', pubKey, { encrypt : true }
+        pubkey = getPublicKeyFromPrivate(userData.appPrivateKey)
+        await @session.putFile 'key.txt', pubkey, { encrypt : false }
       try
         @indices.sites = JSON.parse await @session.getFile "sites.json", { decrypt : true }
       catch err
@@ -43,7 +41,7 @@ export default
       @indices.sites = [] unless @indices.sites?
       @user.apk = userData.appPrivateKey
       @user.did = userData.decentralizedID
-      @user.pk = pubKey
+      @user.pk = pubkey
       @user.username = userData.profile?.name || userData.username || userData.identityAddress
       @user.avatar = userData.profile?.image[0]?.contentUrl || 'https://picsum.photos/100'
       for key, site of @indices.sites
@@ -54,11 +52,11 @@ export default
         analytics = db.query (doc) -> doc
         for lytic in analytics
           uniqOrbitId = lytic._id
-          decryptedLytic = JSON.parse(decryptECIES(@user.apk, lytic.data))
+          decryptedLytic = JSON.parse decryptECIES @user.apk, lytic.data
           decryptedLytic._id = uniqOrbitId
-          isLogged = (newSite.analytics.map (l) -> l._id).includes(uniqOrbitId)
-          newSite.analytics.push(decryptedLytic) if !isLogged
-        await @session.putFile "sites/analytics/#{site}.json", JSON.stringify newSite.analytics, { encrypt : true }
+          isLogged = (newSite.analytics.map (l) -> l._id).includes uniqOrbitId
+          newSite.analytics.push decryptedLytic if !isLogged
+        await @session.putFile "sites/analytics/#{site}.json", JSON.stringify newSite.analytics, { encrypt : true } if newSite.analytics.length
         @models.sites.push newSite
   mounted: ->
     await @connectIpfs()

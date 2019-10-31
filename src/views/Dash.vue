@@ -57,7 +57,7 @@ export default
     showSiteModal: false
   computed:
     activeSite: -> (site for site in @models.sites when site.id is @$route.params.id)[0] || false
-    script: -> '<script src=\"https:\/\/unpkg.com\/ipfs@0.33.0\/dist\/index.min.js\"><\/script>\n<script>\r\n(function (g, a, z, u, m, p) {\r\n    a[u] = a[u] || function () {\r\n  (a[u].q = a[u].q || []).push(arguments)\r\n  };\r\n  m = g.createElement(\'script\'),\r\n  p = g.getElementsByTagName(\'script\')[0];\r\n  m.async = 1; m.src = z; m.id = \'agzscrpt\';\r\n  p.parentNode.insertBefore(m, p)\r\n})(document, window, \'https:\/\/agaze.co\/js\/agaze.js\', \'agaze\');\r\n<\/script>'
+    script: -> '<script src=\"https:\/\/unpkg.com\/ipfs@0.34.4\/dist\/index.min.js\"><\/script>\n<script>\r\n(function (g, a, z, u, m, p) {\r\n    a[u] = a[u] || function () {\r\n  (a[u].q = a[u].q || []).push(arguments)\r\n  };\r\n  m = g.createElement(\'script\'),\r\n  p = g.getElementsByTagName(\'script\')[0];\r\n  m.async = 1; m.src = z; m.id = \'agzscrpt\';\r\n  p.parentNode.insertBefore(m, p)\r\n})(document, window, \'https:\/\/agaze.co\/js\/agaze.js\', \'agaze\');\r\n<\/script>'
     configure: -> "agaze('configure', '#{@user.pk}')"
     sendView: -> "agaze('sendPageview')"
   methods:
@@ -65,6 +65,7 @@ export default
     logout: ->
       redirectTo = isDev ? 'localhost:8080' : 'https:://agaze.co'
       @session.signUserOut(redirectTo)
+    openSiteModal: -> @showSiteModal = true
   mounted: ->
   watch:
     $route: -> @sideMenuOpen = false

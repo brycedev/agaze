@@ -46,7 +46,7 @@ export default
       newSite.createdAt = Date.now()
       newSite.updatedAt = Date.now()
       dbName = "agaze.#{@user.pk.slice(0,8)}.#{url.host}"
-      db = await orbit.create(dbName, 'docstore', { write: ['*'], overwrite: true })
+      db = await orbit.create(dbName, 'docstore', { accessController: { write: ['*'] }})
       newSite.db = db.address.toString()
       @indices.sites.push newSite.id
       await @session.putFile "sites.json", JSON.stringify @indices.sites, { encrypt : true }
